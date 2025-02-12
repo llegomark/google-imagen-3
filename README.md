@@ -2,6 +2,8 @@
 
 ![Google Imagen 3](a_person_setting_on_the_beach_watching_meteors_pix_generated_image.png)
 
+![Google Imagen 3](mayon_volcano_pixel_art_generated_image.png_20250213_034953_310585.png)
+
 This repository contains a Python script, `imagen.py`, that serves as an AI Image Generator leveraging Google's cutting-edge **Imagen 3** model.  Powered by the latest **Google Gen AI Python SDK (`google-genai`)**, this tool allows you to generate high-quality images from text prompts, enhanced by prompt refinement techniques.
 
 **Imagen 3** is Google's highest quality text-to-image model, renowned for its:

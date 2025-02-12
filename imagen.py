@@ -25,9 +25,10 @@ class ImageGeneratorAgent:
         self.client = genai.Client(api_key=self.api_key)
 
     def generate_unique_filename(self, base_name: str) -> str:
-        """Generate a unique filename with timestamp and random numbers."""
+        """Generate a unique filename with timestamp, counter and random numbers."""
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         random_nums = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+        # Timestamp included in base name
         return f"{base_name}_{timestamp}_{random_nums}"
 
     def create_imagen_prompt_prompt(self, user_prompt: str, imagen_prompt_guide: str) -> str:
@@ -127,7 +128,7 @@ Now, generate a detailed and improved Imagen 3 prompt based on the user's initia
             print(error_msg)
             raise
 
-    def generate_image_from_prompt(self, prompt: str, output_file: str, aspect_ratio: str, number_of_images: int):
+    def generate_image_from_prompt(self, prompt: str, output_file: str, aspect_ratio: str, number_of_images: int) -> list[str] | None:
         """Generates an image using Imagen 3 based on the provided prompt and saves it."""
         try:
             print(f"\nImagen 3: Generating image with refined prompt...")
@@ -142,9 +143,15 @@ Now, generate a detailed and improved Imagen 3 prompt based on the user's initia
                 )
             )
 
-            if response is None or not response.generated_images or response.generated_images[0].image.image_bytes is None:
+            if response is None or not response.generated_images or not response.generated_images:
                 raise Exception(
                     "Image generation failed or no image data received from Imagen 3.")
+
+            saved_filenames = []  # List to store the filenames of the saved images
+
+            # Sanitize and shorten user prompt for filename base BEFORE the loop
+            base_filename_prefix = output_file.replace(
+                " ", "_")[:50]  # Use output_file as prefix
 
             for i, generated_image in enumerate(response.generated_images):
                 image_bytes = generated_image.image.image_bytes
@@ -154,9 +161,9 @@ Now, generate a detailed and improved Imagen 3 prompt based on the user's initia
                 output_dir = os.path.dirname(os.path.abspath(output_file))
                 os.makedirs(output_dir, exist_ok=True)
 
-                base_filename = os.path.splitext(os.path.basename(output_file))[
-                    0]  # Get filename without extension
-                # Get extension, default to .png if none
+                # Generate unique filename for each image in loop, using timestamp in base
+                base_filename = self.generate_unique_filename(
+                    base_filename_prefix)  # Unique base filename with timestamp
                 file_extension = os.path.splitext(output_file)[1] or ".png"
                 script_dir = output_dir  # Save to the output directory
 
@@ -171,7 +178,11 @@ Now, generate a detailed and improved Imagen 3 prompt based on the user's initia
 
                 image.save(image_filename)
                 print(f"Image saved to: {image_filename}")
-                return image_filename  # Return saved filename for potential further use
+                # Add filename to the list
+                saved_filenames.append(image_filename)
+
+            # Function returns None if no images have been saved
+            return saved_filenames if saved_filenames else None  # Return the list of filenames
 
         except Exception as e:
             error_msg = f"Error generating or saving image: {str(e)}"
@@ -242,13 +253,22 @@ def main():
         # Sanitize and shorten user prompt for filename
         safe_user_prompt = user_prompt.replace(" ", "_")[:50]
         # Default png output in script directory
+        # Just used for extension and prefix
         output_file = f"{safe_user_prompt}_generated_image.png"
 
         # Generate and save image using Imagen 3 and the refined prompt
-        image_agent.generate_image_from_prompt(
+        saved_image_filenames = image_agent.generate_image_from_prompt(
             refined_prompt, output_file, aspect_ratio, number_of_images)
 
-        print("\n=== Image generation process completed ===")
+        if saved_image_filenames:
+            print(
+                f"\n=== Image generation process completed. {len(saved_image_filenames)} image(s) saved ===")
+            # Optionally, print the filenames
+            # for filename in saved_image_filenames:
+            #     print(filename)
+        else:
+            print(
+                "\n=== Image generation process completed, but no images were saved. ===")
 
     except Exception as e:
         print(f"\n=== Image generation process failed ===")
