@@ -98,7 +98,7 @@ Now, generate a detailed and improved Imagen 3 prompt based on the user's initia
                     temperature=1,
                     top_p=0.95,
                     top_k=40,
-                    max_output_tokens=8192,
+                    max_output_tokens=480,
                 )
             )
 
@@ -127,19 +127,17 @@ Now, generate a detailed and improved Imagen 3 prompt based on the user's initia
             print(error_msg)
             raise
 
-    def generate_image_from_prompt(self, prompt: str, output_file: str):
+    def generate_image_from_prompt(self, prompt: str, output_file: str, aspect_ratio: str, number_of_images: int):
         """Generates an image using Imagen 3 based on the provided prompt and saves it."""
         try:
             print(f"\nImagen 3: Generating image with refined prompt...")
             response = self.client.models.generate_images(
-                model='imagen-3.0-generate-002',  # Using Imagen 3 model for image generation
+                model='imagen-3.0-generate-002',
                 prompt=prompt,
                 config=types.GenerateImagesConfig(
-                    number_of_images=1,
-                    aspect_ratio="16:9",  # Keeping aspect ratio as 16:9 as per previous request
-                    # Keeping safety filter as BLOCK_LOW_AND_ABOVE as per previous fix
+                    number_of_images=number_of_images,
+                    aspect_ratio=aspect_ratio,
                     safety_filter_level="BLOCK_LOW_AND_ABOVE",
-                    # Keeping person generation as ALLOW_ADULT as per previous request
                     person_generation="ALLOW_ADULT"
                 )
             )
@@ -181,8 +179,8 @@ Now, generate a detailed and improved Imagen 3 prompt based on the user's initia
             raise
 
 
-def get_user_prompt_input() -> str:
-    """Get the initial image prompt from the user."""
+def get_user_prompt_input() -> tuple[str, str, int]:
+    """Get the initial image prompt, aspect ratio and number of images from the user."""
     print("\n=== Imagen 3 Prompt Refinement and Image Generator ===")
     print("This tool will refine your prompt using Gemini and generate an image using Imagen 3.")
     print("The image will be saved in the same directory as this script.")
@@ -191,7 +189,22 @@ def get_user_prompt_input() -> str:
     while not user_prompt:
         user_prompt = input(
             "Prompt cannot be empty. Please enter an image prompt: ").strip()
-    return user_prompt
+
+    print("\nAvailable aspect ratios: 1:1, 3:4, 4:3, 9:16, 16:9")
+    aspect_ratio = input(
+        "Enter desired aspect ratio (default: 16:9): ").strip() or "16:9"
+    while aspect_ratio not in ["1:1", "3:4", "4:3", "9:16", "16:9"]:
+        aspect_ratio = input(
+            "Invalid aspect ratio. Choose from 1:1, 3:4, 4:3, 9:16, 16:9: ").strip() or "16:9"
+
+    number_of_images_str = input(
+        "Enter number of images to generate (1-4, default: 1): ").strip() or "1"
+    while not number_of_images_str.isdigit() or not 1 <= int(number_of_images_str) <= 4:
+        number_of_images_str = input(
+            "Invalid number of images. Enter a number between 1 and 4: ").strip() or "1"
+    number_of_images = int(number_of_images_str)
+
+    return user_prompt, aspect_ratio, number_of_images
 
 
 def load_imagen_prompt_guide(filepath="imagen_prompt_guide.md") -> str:
@@ -214,8 +227,8 @@ def main():
         # Initialize Image Generator Agent
         image_agent = ImageGeneratorAgent()
 
-        # Get user prompt
-        user_prompt = get_user_prompt_input()
+        # Get user input
+        user_prompt, aspect_ratio, number_of_images = get_user_prompt_input()
 
         # Load Imagen prompt guide documentation from file
         imagen_prompt_guide_content = load_imagen_prompt_guide(
@@ -232,7 +245,8 @@ def main():
         output_file = f"{safe_user_prompt}_generated_image.png"
 
         # Generate and save image using Imagen 3 and the refined prompt
-        image_agent.generate_image_from_prompt(refined_prompt, output_file)
+        image_agent.generate_image_from_prompt(
+            refined_prompt, output_file, aspect_ratio, number_of_images)
 
         print("\n=== Image generation process completed ===")
 
