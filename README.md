@@ -54,7 +54,7 @@ The `imagen_with_refinement.py` script takes your text prompt and utilizes **Gem
     Alternatively, install them individually:
 
     ```bash
-    pip install python-dotenv google-generai Pillow
+    pip install python-dotenv google-genai Pillow
     ```
 
 3.  **Configure API Key:**
