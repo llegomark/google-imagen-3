@@ -1,49 +1,51 @@
-# google-imagen-3
+# google-imagen-3: AI Image Generator with Imagen 3 and Gemini Prompt Refinement
 
-![Google Imagen 3](a_person_setting_on_the_beach_watching_meteors_pix_generated_image.png)
+[![Google Imagen 3](/images/a_person_setting_on_the_beach_watching_meteors_pix_generated_image.png)](https://github.com/llegomark/google-imagen-3)
+[![Google Imagen 3](/images/mayon_volcano_pixel_art_generated_image.png_20250213_034953_310585.png)](https://github.com/llegomark/google-imagen-3)
 
-![Google Imagen 3](mayon_volcano_pixel_art_generated_image.png_20250213_034953_310585.png)
+This repository provides a Python script, `imagen_with_refinement.py`, for generating high-quality images using Google's cutting-edge **Imagen 3** model.  Leveraging the latest **Google Gen AI Python SDK (`google-genai`)** and **Gemini**, this tool enhances your image prompts before sending them to Imagen 3, resulting in more detailed and visually compelling creations.
 
-This repository contains a Python script, `imagen.py`, that serves as an AI Image Generator leveraging Google's cutting-edge **Imagen 3** model.  Powered by the latest **Google Gen AI Python SDK (`google-genai`)**, this tool allows you to generate high-quality images from text prompts, enhanced by prompt refinement techniques.
+**Imagen 3 - Google's Premier Text-to-Image Model:**
 
-**Imagen 3** is Google's highest quality text-to-image model, renowned for its:
+*   **Unmatched Detail**: Generate images with exceptional detail, nuanced lighting, and minimal artifacts.
+*   **Superior Natural Language Understanding**:  Accurately interprets and responds to complex, natural language prompts.
+*   **Versatile Styles**: Create images across a vast spectrum of formats and artistic styles, from photorealistic to stylized art.
+*   **Advanced Text Rendering**:  Effectively incorporates text within images (while this script primarily focuses on visual generation).
 
-*   **Exceptional Detail**: Generates images with fine detail, rich lighting, and minimal artifacts.
-*   **Natural Language Understanding**:  Effectively interprets and responds to prompts written in natural, descriptive language.
-*   **Style Versatility**: Creates images in a wide range of formats and artistic styles.
-*   **Text Rendering**:  Superior ability to render text within generated images (though this script primarily focuses on image generation).
+The `imagen_with_refinement.py` script takes your text prompt and utilizes **Gemini** to refine it based on the [Imagen Prompt Guide](https://ai.google.dev/gemini-api/docs/imagen-prompt-guide). This enhanced prompt is then used by **Imagen 3 (`imagen-3.0-generate-002`)** to generate the final image, which is saved locally.
 
-This script, `imagen.py`, takes your text prompt, optionally refines it using Gemini for improved results based on the provided [Imagen Prompt Guide documentation](https://ai.google.dev/gemini-api/docs/imagen-prompt-guide), and then utilizes **Imagen 3 (`imagen-3.0-generate-002`)** to generate the image, saving it locally.
+**For a simplified version without prompt refinement, please see `imagen_no_refinement.py`.**
 
 ## Features
 
-*   **Powered by Imagen 3**: Utilizes Google's state-of-the-art Imagen 3 model (`imagen-3.0-generate-002`) for image generation.
-*   **Google Gen AI SDK**: Built with the latest `google-genai` Python SDK, ensuring compatibility and access to the newest features.
-*   **Prompt Refinement with Gemini**:  Can leverage Gemini (`gemini-2.0-flash`) to enhance user prompts based on best practices from the "Imagen Prompt Guide".
-*   **Configurable Aspect Ratio**: Currently set to generate images with a widescreen 16:9 aspect ratio.
-*   **Safety Filtering**: Implements `BLOCK_LOW_AND_ABOVE` safety filtering for responsible image generation.
-*   **Local Image Saving**: Saves generated images as PNG files to the same directory as the script, with unique filenames to prevent overwriting.
-*   **Simple User Interface**:  Takes image prompts as input directly from the command line.
+*   **Imagen 3 Powered**: Employs Google's state-of-the-art Imagen 3 model (`imagen-3.0-generate-002`) for superior image generation.
+*   **Google Gen AI SDK**: Built using the latest `google-genai` Python SDK for optimal performance and access to the newest features.
+*   **Gemini Prompt Refinement**: Integrates Gemini (`gemini-2.0-flash-thinking-exp-01-21`) to intelligently enhance user prompts based on the official "Imagen Prompt Guide", leading to improved image quality and prompt adherence.
+*   **Customizable Aspect Ratio**: Allows users to select from various aspect ratios (1:1, 3:4, 4:3, 9:16, 16:9) for generated images, with a default widescreen 16:9 setting.
+*   **Adjustable Image Count**: Enables users to generate multiple images (1-4) per prompt.
+*   **Robust Safety Filters**: Implements `BLOCK_LOW_AND_ABOVE` safety filtering to ensure responsible and safe image generation.
+*   **Local Storage with Unique Filenames**: Saves generated images as PNG files in the script's directory, using unique, timestamped filenames to prevent accidental overwriting.
+*   **Command-Line Interface**: Provides a straightforward command-line interface for easy prompt input and image generation.
 
 ## Getting Started
 
 ### Prerequisites
 
-*   **Python 3.12+**
-*   **pip** (Python package installer)
-*   **Google Generative AI API Key**:  You need an API key to access Google Generative AI services. Obtain one from [Google AI for Developers](https://aistudio.google.com/app/u/0/apikey).
-*   **Python Libraries**: Install the necessary libraries (see Installation).
+*   **Python 3.12+** (Recommended)
+*   **pip** (Python Package Installer)
+*   **Google Generative AI API Key**: Obtain an API key from [Google AI for Developers](https://aistudio.google.com/app/u/0/apikey) to access Google's Generative AI services.
+*   **Python Libraries**: Install the required libraries listed in `requirements.txt`.
 
 ### Installation
 
-1.  **Clone the repository (or download as ZIP):**
+1.  **Clone the Repository:**
 
     ```bash
     git clone https://github.com/llegomark/google-imagen-3.git
     cd google-imagen-3
     ```
 
-2.  **Install required Python libraries:**
+2.  **Install Python Dependencies:**
 
     ```bash
     pip install -r requirements.txt
@@ -52,13 +54,13 @@ This script, `imagen.py`, takes your text prompt, optionally refines it using Ge
     Alternatively, install them individually:
 
     ```bash
-    pip install python-dotenv google-genai Pillow
+    pip install python-dotenv google-generai Pillow
     ```
 
-3.  **Set up your API Key:**
+3.  **Configure API Key:**
 
-    *   Create a `.env` file in the same directory as `imagen.py`.
-    *   Add your Google Generative AI API key to the `.env` file:
+    *   Create a `.env` file in the same directory as `imagen_with_refinement.py` (or `imagen_no_refinement.py` if you are using the simplified version).
+    *   Add your Google Generative AI API key to `.env`:
 
         ```env
         GOOGLE_API_KEY=YOUR_API_KEY_HERE
@@ -66,37 +68,55 @@ This script, `imagen.py`, takes your text prompt, optionally refines it using Ge
 
         **Replace `YOUR_API_KEY_HERE` with your actual API key.**
 
+4.  **(Optional) Imagen Prompt Guide:**
+    *   For prompt refinement to function (using `imagen_with_refinement.py`), ensure you have the `imagen_prompt_guide.md` file in the same directory. This file should contain the content from the [Imagen Prompt Guide documentation](https://ai.google.dev/gemini-api/docs/imagen-prompt-guide).
+
 ### Usage
 
-#### Generate an Image with `imagen.py`
+#### Generate Images with Prompt Refinement (`imagen_with_refinement.py`)
 
 1.  Run the script from your terminal:
 
     ```bash
-    python imagen.py
+    python imagen_with_refinement.py
     ```
 
-2.  You will be prompted to enter an image prompt. Type your prompt and press Enter.
+2.  You will be prompted to enter your image prompt, desired aspect ratio, and number of images to generate.
 
     ```
     === Imagen 3 Prompt Refinement and Image Generator ===
     This tool will refine your prompt using Gemini and generate an image using Imagen 3.
     The image will be saved in the same directory as this script.
 
-    Enter your image prompt: Your Image Prompt Here (e.g., "a person setting on the beach watching meteors pixel style")
+    Enter your image prompt: Your Image Prompt Here (e.g., "a futuristic cityscape at sunset")
+
+    Available aspect ratios: 1:1, 3:4, 4:3, 9:16, 16:9
+    Enter desired aspect ratio (default: 16:9): [Press Enter for default or type aspect ratio]
+
+    Enter number of images to generate (1-4, default: 1): [Press Enter for default or type number]
     ```
 
-3.  The script will send your prompt to Imagen 3, generate the image, and save it as a PNG file (e.g., `your_prompt_generated_image.png`) in the same directory as `imagen.py`.
+3.  The script will refine your prompt using Gemini, generate the image(s) using Imagen 3, and save them as PNG files (e.g., `your_prompt_generated_image_timestamp_random.png`) in the same directory.
 
-## Prompt Writing for Imagen 3
+#### Generate Images Without Prompt Refinement (`imagen_no_refinement.py`)
 
-For best results with Imagen 3, consider these prompt writing tips (refer to the [Imagen Prompt Guide](https://ai.google.dev/gemini-api/docs/imagen-prompt-guide) for more detailed information):
+1.  Run the simplified script:
 
-*   **Be Descriptive**: Use detailed adjectives and adverbs to clearly describe your desired image.
-*   **Provide Context**: Include background information and context to help the AI understand the scene.
-*   **Specify Style**: Indicate the desired style (e.g., "photograph", "painting", "digital art", "sketch") and be as specific as possible (e.g., "watercolor painting", "black and white film noir").
-*   **Consider Modifiers**: Explore photography modifiers (lighting, lens type, camera angle), art styles, and quality modifiers to fine-tune your image generation.
-*   **Experiment**: Iteration is key! Try different prompts and modifiers to achieve your desired results.
+    ```bash
+    python imagen_no_refinement.py
+    ```
+
+2.  Follow the same prompts as above to enter your image prompt, aspect ratio, and number of images. This script will directly use your prompt with Imagen 3, bypassing the Gemini refinement step.
+
+## Prompt Writing Tips for Imagen 3
+
+To maximize the quality of your generated images, consider these prompt writing guidelines (refer to the comprehensive [Imagen Prompt Guide](https://ai.google.dev/gemini-api/docs/imagen-prompt-guide) for more in-depth information):
+
+*   **Descriptive Prompts are Key**: Employ rich adjectives and adverbs to paint a vivid and detailed picture of your desired image for the AI.
+*   **Contextualize the Scene**: Provide ample background information and context to aid the AI's understanding of the scene you envision.
+*   **Specify Visual Style**: Clearly indicate the desired visual style (e.g., "photograph," "painting," "digital art," "sketch"). Be as precise as possible (e.g., "watercolor painting," "hyperrealistic digital art," "vintage black and white photograph").
+*   **Leverage Modifiers**: Experiment with photography-related modifiers (lighting conditions, lens types, camera angles), artistic styles, and image quality enhancers to fine-tune your generated images.
+*   **Iterate and Refine**: Prompt engineering is an iterative process. Don't hesitate to experiment with different prompts and modifiers to progressively refine your output and achieve your artistic vision.
 
 ## License
 
